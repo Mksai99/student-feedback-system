@@ -1,0 +1,19 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.12
+  build:
+    commands:
+      - echo "Zipping submitFeedback.py"
+      - zip function.zip submitFeedback.py
+
+artifacts:
+  files:
+    - function.zip
+
+post_build:
+  commands:
+    - echo "Deploying to Lambda function: SubmitFeedbackFunction"
+    - aws lambda update-function-code --function-name SubmitFeedbackFunction --zip-file fileb://function.zip --region us-east-1

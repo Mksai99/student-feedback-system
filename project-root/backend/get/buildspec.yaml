@@ -1,0 +1,19 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.12
+  build:
+    commands:
+      - echo "Zipping getFeedback.py"
+      - zip function.zip getFeedback.py
+
+artifacts:
+  files:
+    - function.zip
+
+post_build:
+  commands:
+    - echo "Deploying to Lambda function: GetFeedbackFunction"
+    - aws lambda update-function-code --function-name GetFeedbackFunction --zip-file fileb://function.zip --region us-east-1
