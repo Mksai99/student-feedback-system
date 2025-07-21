@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Login</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f2f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .login-container {
+      background: white;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 25px;
+      color: #333;
+    }
+
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #2196F3;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+
+    button:hover {
+      background-color: #1976D2;
+    }
+
+    .error-message {
+      color: red;
+      margin-bottom: 15px;
+    }
+
+    .back-button {
+      background-color: #6c757d;
+    }
+
+    .back-button:hover {
+      background-color: #5a6268;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>Admin Login</h2>
+    <div class="error-message" id="errorMessage"></div>
+    <form id="loginForm">
+      <input type="text" name="username" placeholder="Username" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <button type="submit" id="loginBtn">Login</button>
+    </form>
+
+    <!-- Back to Feedback Form Button -->
+    <button class="back-button" onclick="location.href='index.html'">← Back to Feedback Form</button>
+  </div>
+
+  <script>
+    const form = document.getElementById("loginForm");
+    const errorDiv = document.getElementById("errorMessage");
+    const loginBtn = document.getElementById("loginBtn");
+
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      loginBtn.disabled = true;
+      loginBtn.textContent = "Logging in...";
+
+      const username = form.username.value.trim();
+      const password = form.password.value.trim();
+
+      try {
+        const res = await fetch("https://pd84vvydc5.execute-api.us-east-1.amazonaws.com/prod/submit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ username, password })
+        });
+
+        const result = await res.json();
+
+        if (result.success) {
+          localStorage.setItem("isAdminLoggedIn", "true");
+          window.location.href = "admin.html";
+        } else {
+          errorDiv.textContent = result.message || "❌ Login failed. Try again.";
+        }
+      } catch (err) {
+        console.error(err);
+        errorDiv.textContent = "❌ An error occurred. Please try again later.";
+      } finally {
+        loginBtn.disabled = false;
+        loginBtn.textContent = "Login";
+      }
+    });
+  </script>
+</body>
+</html>
